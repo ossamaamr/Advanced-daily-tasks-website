@@ -126,7 +126,8 @@ input, textarea, select {
 .settings-panel.visible {
     display: block;
 }
-/* توهج ذهبي متحرك */
+
+/* GOLD GLOW ANIMATION */
 @keyframes goldGlow {
     0% { box-shadow: 0 0 8px rgba(212,175,55,0.2); }
     50% { box-shadow: 0 0 18px rgba(212,175,55,0.5); }
@@ -136,4 +137,3 @@ input, textarea, select {
 .card-animated {
     animation: goldGlow 2.5s infinite ease-in-out;
 }
-
