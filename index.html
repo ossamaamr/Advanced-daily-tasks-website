@@ -1,43 +1,133 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>إنجازاتي</title>
-<link rel="stylesheet" href="style.css">
-<script defer src="app.js"></script>
+    <meta charset="UTF-8">
+    <title>نظام إدارة المهام المتقدم</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="settings.js"></script>
+    <script defer src="script.js"></script>
 </head>
-<body class="dark">
 
-<button class="theme-toggle" id="themeToggle">🌙</button>
+<body>
 
-<div class="container">
-    <header>
-        <h1>إنجازاتي</h1>
-        <div class="stats">
-            <div class="stat-card" id="freezeCard">
-                ❄️<span id="freezeCount">0</span><br>تجميد
-            </div>
-            <div class="stat-card" id="streakCard">
-                🔥<span id="streakCount">0</span><br>شعلة
-            </div>
-            <div class="stat-card" id="xpCard">
-                XP<span id="xpCount">0</span><br>نقاط
-            </div>
-        </div>
+    <header class="header">
+        <img src="assets/logo.png" class="logo">
+        <h1>نظام إدارة المهام المتقدم</h1>
+
+        <button id="settingsBtn" class="settings-btn">⚙ الإعدادات</button>
     </header>
 
-    <div id="taskInput">
-        <input id="newTask" placeholder="ماذا سننجز اليوم؟">
-        <button id="addTaskBtn">إضافة</button>
+    <section class="stats">
+        <div class="stat">
+            <span>إجمالي المهام</span>
+            <strong id="totalTasks">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>المكتملة</span>
+            <strong id="completedTasks">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>المتبقية</span>
+            <strong id="pendingTasks">0</strong>
+        </div>
+
+        <div class="progress-container">
+            <div id="progressBar" class="progress-bar"></div>
+        </div>
+    </section>
+
+    <section class="task-form">
+        <h2>إضافة مهمة جديدة</h2>
+
+        <form id="taskForm">
+            <input type="text" id="title" placeholder="عنوان المهمة" required>
+
+            <textarea id="description" placeholder="وصف المهمة (اختياري)"></textarea>
+
+            <div class="row">
+                <input type="date" id="dueDate">
+                <select id="priority">
+                    <option value="low">منخفضة</option>
+                    <option value="medium" selected>متوسطة</option>
+                    <option value="high">عالية</option>
+                </select>
+                <select id="category">
+                    <option value="work">عمل</option>
+                    <option value="study">دراسة</option>
+                    <option value="personal">شخصي</option>
+                    <option value="custom">مخصص</option>
+                </select>
+            </div>
+
+            <button class="btn">إضافة</button>
+        </form>
+    </section>
+
+    <section class="filters">
+        <h2>فلترة المهام</h2>
+
+        <div class="row">
+            <select id="statusFilter">
+                <option value="all">الكل</option>
+                <option value="pending">غير مكتملة</option>
+                <option value="completed">مكتملة</option>
+            </select>
+
+            <select id="priorityFilter">
+                <option value="all">الكل</option>
+                <option value="low">منخفضة</option>
+                <option value="medium">متوسطة</option>
+                <option value="high">عالية</option>
+            </select>
+
+            <select id="categoryFilter">
+                <option value="all">كل الفئات</option>
+                <option value="work">عمل</option>
+                <option value="study">دراسة</option>
+                <option value="personal">شخصي</option>
+            </select>
+
+            <input type="text" id="searchInput" placeholder="بحث...">
+        </div>
+    </section>
+
+    <section class="tasks">
+        <h2>قائمة المهام</h2>
+        <ul id="taskList"></ul>
+    </section>
+
+    <section class="pomodoro">
+        <h2>مؤقت التركيز</h2>
+
+        <div class="timer">
+            <span id="timerDisplay">25:00</span>
+        </div>
+
+        <div class="timer-controls">
+            <button id="startTimer">ابدأ</button>
+            <button id="resetTimer">إعادة</button>
+        </div>
+    </section>
+
+    <div id="settingsPanel" class="settings-panel hidden">
+        <h2>الإعدادات</h2>
+
+        <label>الثيم</label>
+        <select id="themeSelect">
+            <option value="dark">داكن</option>
+            <option value="light">فاتح</option>
+        </select>
+
+        <label>اللغة</label>
+        <select id="langSelect">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+        </select>
+
+        <button id="closeSettings" class="btn">إغلاق</button>
     </div>
-
-    <div class="task-list" id="tasks"></div>
-</div>
-
-<div class="modal" id="imageModal" onclick="closeModal()">
-    <img id="modalImg" src="">
-</div>
 
 </body>
 </html>
