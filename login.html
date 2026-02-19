@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="login.js"></script>
+
+    <style>
+        .login-container {
+            max-width: 380px;
+            margin: 80px auto;
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 18px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-strong);
+            text-align: center;
+        }
+
+        .login-container h2 {
+            margin-bottom: 16px;
+            font-size: 1.2rem;
+        }
+
+        .login-container input {
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+        <h2>تسجيل الدخول</h2>
+
+        <div id="errorMsg" class="error-msg">بيانات الدخول غير صحيحة</div>
+
+        <input type="text" id="username" placeholder="اسم المستخدم" required>
+        <input type="password" id="password" placeholder="كلمة المرور" required>
+
+        <button id="loginBtn" class="btn">دخول</button>
+    </div>
+
+</body>
+</html>
