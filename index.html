@@ -1,23 +1,51 @@
-<button id="logoutBtn" class="settings-btn">تسجيل خروج</button>
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <title>نظام إدارة المهام المتقدم</title>
+
+    <!-- ملفات CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- ملف PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- أيقونات PWA -->
+    <link rel="icon" href="assets/icon-192.png">
+
+    <!-- ملفات JS -->
     <script defer src="settings.js"></script>
     <script defer src="script.js"></script>
+
+    <style>
+        /* زر تسجيل الخروج */
+        #logoutBtn {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
+    <!-- حماية الصفحة -->
+    <script>
+        if (localStorage.getItem("loggedIn") !== "true") {
+            window.location.href = "login.html";
+        }
+    </script>
+
+    <!-- الهيدر -->
     <header class="header">
         <img src="assets/logo.png" class="logo">
         <h1>نظام إدارة المهام المتقدم</h1>
 
-        <button id="settingsBtn" class="settings-btn">⚙ الإعدادات</button>
+        <div style="display:flex; gap:10px;">
+            <button id="settingsBtn" class="settings-btn">⚙ الإعدادات</button>
+            <button id="logoutBtn" class="settings-btn">تسجيل خروج</button>
+        </div>
     </header>
 
+    <!-- الإحصائيات -->
     <section class="stats">
         <div class="stat">
             <span>إجمالي المهام</span>
@@ -39,6 +67,7 @@
         </div>
     </section>
 
+    <!-- إضافة مهمة -->
     <section class="task-form">
         <h2>إضافة مهمة جديدة</h2>
 
@@ -49,11 +78,13 @@
 
             <div class="row">
                 <input type="date" id="dueDate">
+
                 <select id="priority">
                     <option value="low">منخفضة</option>
                     <option value="medium" selected>متوسطة</option>
                     <option value="high">عالية</option>
                 </select>
+
                 <select id="category">
                     <option value="work">عمل</option>
                     <option value="study">دراسة</option>
@@ -66,6 +97,7 @@
         </form>
     </section>
 
+    <!-- الفلاتر -->
     <section class="filters">
         <h2>فلترة المهام</h2>
 
@@ -94,24 +126,27 @@
         </div>
     </section>
 
+    <!-- قائمة المهام -->
     <section class="tasks">
         <h2>قائمة المهام</h2>
         <ul id="taskList"></ul>
     </section>
 
+    <!-- مؤقت بومودورو -->
     <section class="pomodoro">
-        <h2>مؤقت التركيز</h2>
+        <h2>مؤقت التركيز (Pomodoro)</h2>
 
         <div class="timer">
             <span id="timerDisplay">25:00</span>
         </div>
 
         <div class="timer-controls">
-            <button id="startTimer">ابدأ</button>
-            <button id="resetTimer">إعادة</button>
+            <button id="startTimer" class="btn">ابدأ</button>
+            <button id="resetTimer" class="btn">إعادة</button>
         </div>
     </section>
 
+    <!-- لوحة الإعدادات -->
     <div id="settingsPanel" class="settings-panel hidden">
         <h2>الإعدادات</h2>
 
@@ -130,6 +165,21 @@
         <button id="closeSettings" class="btn">إغلاق</button>
     </div>
 
+    <!-- تسجيل Service Worker -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
+
+    <!-- زر تسجيل الخروج -->
+    <script>
+        const logoutBtn = document.getElementById("logoutBtn");
+        logoutBtn.addEventListener("click", () => {
+            localStorage.removeItem("loggedIn");
+            window.location.href = "login.html";
+        });
+    </script>
+
 </body>
 </html>
-
