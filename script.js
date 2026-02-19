@@ -1,136 +1,176 @@
-document.getElementById("userName").textContent = localStorage.getItem("username") || "مستخدم";
-/* تسجيل الخروج */
-const logoutBtn = document.getElementById("logoutBtn");
+// ============ DATA STRUCTURE ============
 
-logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("loggedIn");
-    window.location.href = "login.html";
-});
-/* حماية الصفحة */
-if (localStorage.getItem("loggedIn") !== "true") {
-    window.location.href = "login.html";
-}
-/* ============================
-   عناصر DOM
-============================ */
+let tasks = [];
+let trash = [];
+let timerInterval = null;
+let timerSeconds = 25 * 60;
+
+// ============ DOM ELEMENTS ============
+
 const taskForm = document.getElementById("taskForm");
 const taskList = document.getElementById("taskList");
-
-const totalTasksEl = document.getElementById("totalTasks");
-const completedTasksEl = document.getElementById("completedTasks");
-const pendingTasksEl = document.getElementById("pendingTasks");
-const progressBar = document.getElementById("progressBar");
+const trashList = document.getElementById("trashList");
 
 const statusFilter = document.getElementById("statusFilter");
 const priorityFilter = document.getElementById("priorityFilter");
 const categoryFilter = document.getElementById("categoryFilter");
 const searchInput = document.getElementById("searchInput");
 
-const settingsBtn = document.getElementById("settingsBtn");
-const settingsPanel = document.getElementById("settingsPanel");
-const closeSettings = document.getElementById("closeSettings");
+const totalTasksEl = document.getElementById("totalTasks");
+const completedTasksEl = document.getElementById("completedTasks");
+const pendingTasksEl = document.getElementById("pendingTasks");
+const todayTasksEl = document.getElementById("todayTasks");
+const progressBar = document.getElementById("progressBar");
 
-const themeSelect = document.getElementById("themeSelect");
-const langSelect = document.getElementById("langSelect");
-
-/* ============================
-   مؤقت بومودورو
-============================ */
-let timerInterval;
-let timeLeft = 25 * 60; // 25 دقيقة
 const timerDisplay = document.getElementById("timerDisplay");
 const startTimerBtn = document.getElementById("startTimer");
 const resetTimerBtn = document.getElementById("resetTimer");
 
-function updateTimerDisplay() {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerDisplay.textContent =
-        `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsPanel = document.getElementById("settingsPanel");
+const closeSettingsBtn = document.getElementById("closeSettings");
+
+const themeSelect = document.getElementById("themeSelect");
+const langSelect = document.getElementById("langSelect");
+const soundSelect = document.getElementById("soundSelect");
+
+const categorySelect = document.getElementById("category");
+const customCategoryInput = document.getElementById("customCategory");
+const reminderCheckbox = document.getElementById("reminder");
+
+// ============ SOUNDS (بسيطة) ============
+
+const soundAdd = new Audio("sounds/add.mp3");
+const soundDone = new Audio("sounds/done.mp3");
+const soundTimer = new Audio("sounds/timer.mp3");
+
+function playSound(type) {
+    if (!soundSelect || soundSelect.value === "off") return;
+    if (type === "add") soundAdd.play().catch(()=>{});
+    if (type === "done") soundDone.play().catch(()=>{});
+    if (type === "timer") soundTimer.play().catch(()=>{});
 }
 
-startTimerBtn.addEventListener("click", () => {
-    if (timerInterval) return;
+// ============ LOCAL STORAGE ============
 
-    timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimerDisplay();
-
-        if (timeLeft <= 0) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alert("انتهى وقت التركيز!");
-            timeLeft = 25 * 60;
-            updateTimerDisplay();
-        }
-    }, 1000);
-});
-
-resetTimerBtn.addEventListener("click", () => {
-    clearInterval(timerInterval);
-    timerInterval = null;
-    timeLeft = 25 * 60;
-    updateTimerDisplay();
-});
-
-/* ============================
-   نظام الإعدادات
-============================ */
-settingsBtn.addEventListener("click", () => {
-    settingsPanel.classList.remove("hidden");
-});
-
-closeSettings.addEventListener("click", () => {
-    settingsPanel.classList.add("hidden");
-});
-
-/* الثيم */
-themeSelect.addEventListener("change", () => {
-    document.body.className = themeSelect.value === "light" ? "light" : "";
-    localStorage.setItem("theme", themeSelect.value);
-});
-
-/* اللغة */
-langSelect.addEventListener("change", () => {
-    localStorage.setItem("lang", langSelect.value);
-    alert("سيتم دعم تغيير اللغة في التحديث القادم");
-});
-
-/* تحميل الإعدادات */
-(function loadSettings() {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "light") {
-        document.body.classList.add("light");
-        themeSelect.value = "light";
-    }
-
-    const savedLang = localStorage.getItem("lang");
-    if (savedLang) langSelect.value = savedLang;
-})();
-
-/* ============================
-   نظام المهام
-============================ */
-let tasks = [];
-
-/* تحميل المهام */
-window.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem("tasks");
-    if (saved) tasks = JSON.parse(saved);
-    renderTasks();
-});
-
-/* حفظ المهام */
-function saveTasks() {
+function saveData() {
     localStorage.setItem("tasks", JSON.stringify(tasks));
+    localStorage.setItem("trash", JSON.stringify(trash));
 }
 
-/* إنشاء ID */
-function generateId() {
-    return Date.now().toString();
+function loadData() {
+    tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    trash = JSON.parse(localStorage.getItem("trash") || "[]");
 }
 
-/* إضافة مهمة */
+// ============ RENDERING ============
+
+function renderTasks() {
+    taskList.innerHTML = "";
+
+    const statusVal = statusFilter.value;
+    const priorityVal = priorityFilter.value;
+    const categoryVal = categoryFilter.value;
+    const searchVal = searchInput.value.toLowerCase();
+
+    const filtered = tasks.filter(task => {
+        if (statusVal === "completed" && !task.completed) return false;
+        if (statusVal === "pending" && task.completed) return false;
+        if (priorityVal !== "all" && task.priority !== priorityVal) return false;
+        if (categoryVal !== "all" && task.category !== categoryVal) return false;
+        if (searchVal && !(
+            task.title.toLowerCase().includes(searchVal) ||
+            (task.description || "").toLowerCase().includes(searchVal)
+        )) return false;
+        return true;
+    });
+
+    filtered.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task" + (task.completed ? " completed" : "");
+
+        li.innerHTML = `
+            <div class="task-header">
+                <div class="task-title">${task.title}</div>
+                <div>
+                    <span class="badge">${task.priority}</span>
+                    <span class="badge">${task.category}</span>
+                </div>
+            </div>
+            <div class="task-meta">
+                ${task.dueDate ? `تاريخ: ${task.dueDate}` : "بدون تاريخ"} 
+                ${task.reminder ? " • تذكير مفعّل" : ""}
+            </div>
+            ${task.description ? `<div class="task-meta">${task.description}</div>` : ""}
+            <div class="task-actions">
+                <button class="btn" data-action="toggle" data-id="${task.id}">
+                    ${task.completed ? "إلغاء الإكمال" : "تحديد كمكتملة"}
+                </button>
+                <button class="btn" data-action="delete" data-id="${task.id}">
+                    حذف
+                </button>
+            </div>
+        `;
+
+        taskList.appendChild(li);
+    });
+
+    renderTrash();
+    updateStats();
+}
+
+function renderTrash() {
+    trashList.innerHTML = "";
+
+    trash.forEach(task => {
+        const li = document.createElement("li");
+        li.className = "task";
+
+        li.innerHTML = `
+            <div class="task-header">
+                <div class="task-title">${task.title}</div>
+                <div>
+                    <span class="badge">محذوفة</span>
+                </div>
+            </div>
+            <div class="task-meta">
+                ${task.dueDate ? `تاريخ: ${task.dueDate}` : "بدون تاريخ"}
+            </div>
+            <div class="task-actions">
+                <button class="btn" data-action="restore" data-id="${task.id}">
+                    استعادة
+                </button>
+                <button class="btn" data-action="remove" data-id="${task.id}">
+                    حذف نهائي
+                </button>
+            </div>
+        `;
+
+        trashList.appendChild(li);
+    });
+}
+
+// ============ STATS ============
+
+function updateStats() {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.completed).length;
+    const pending = total - completed;
+
+    const todayStr = new Date().toISOString().slice(0,10);
+    const todayCount = tasks.filter(t => t.dueDate === todayStr).length;
+
+    totalTasksEl.textContent = total;
+    completedTasksEl.textContent = completed;
+    pendingTasksEl.textContent = pending;
+    todayTasksEl.textContent = todayCount;
+
+    const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+    progressBar.style.width = percent + "%";
+}
+
+// ============ ADD TASK ============
+
 taskForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -138,204 +178,157 @@ taskForm.addEventListener("submit", (e) => {
     const description = document.getElementById("description").value.trim();
     const dueDate = document.getElementById("dueDate").value;
     const priority = document.getElementById("priority").value;
-    const category = document.getElementById("category").value;
+    let category = categorySelect.value;
+    const reminder = reminderCheckbox.checked;
+
+    if (category === "custom") {
+        const custom = customCategoryInput.value.trim();
+        if (custom) category = custom;
+    }
 
     if (!title) return;
 
     const newTask = {
-        id: generateId(),
+        id: Date.now(),
         title,
         description,
         dueDate,
         priority,
         category,
-        completed: false
+        reminder,
+        completed: false,
+        createdAt: new Date().toISOString()
     };
 
-    tasks.unshift(newTask);
-    saveTasks();
+    tasks.push(newTask);
+    saveData();
     renderTasks();
-    taskForm.reset();
+    playSound("add");
 
-    showNotification("تمت إضافة مهمة جديدة");
+    taskForm.reset();
+    customCategoryInput.style.display = "none";
 });
 
-/* إشعار بسيط */
-function showNotification(msg) {
-    const div = document.createElement("div");
-    div.textContent = msg;
-    div.style.position = "fixed";
-    div.style.bottom = "20px";
-    div.style.right = "20px";
-    div.style.background = "#38bdf8";
-    div.style.color = "#000";
-    div.style.padding = "10px 16px";
-    div.style.borderRadius = "8px";
-    div.style.fontWeight = "bold";
-    div.style.boxShadow = "0 4px 12px rgba(0,0,0,0.3)";
-    div.style.zIndex = "999";
+// ============ CATEGORY CUSTOM FIELD ============
 
-    document.body.appendChild(div);
+categorySelect.addEventListener("change", () => {
+    if (categorySelect.value === "custom") {
+        customCategoryInput.style.display = "block";
+    } else {
+        customCategoryInput.style.display = "none";
+    }
+});
 
-    setTimeout(() => div.remove(), 2000);
-}
+// ============ TASK ACTIONS ============
 
-/* فلترة المهام */
-function getFilteredTasks() {
-    const statusValue = statusFilter.value;
-    const priorityValue = priorityFilter.value;
-    const categoryValue = categoryFilter.value;
-    const searchValue = searchInput.value.trim().toLowerCase();
+taskList.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
 
-    return tasks.filter(task => {
-        let ok = true;
+    const id = Number(btn.dataset.id);
+    const action = btn.dataset.action;
 
-        if (statusValue === "completed") ok = task.completed;
-        else if (statusValue === "pending") ok = !task.completed;
-
-        if (priorityValue !== "all") ok = ok && task.priority === priorityValue;
-
-        if (categoryValue !== "all") ok = ok && task.category === categoryValue;
-
-        if (searchValue) ok = ok && task.title.toLowerCase().includes(searchValue);
-
-        return ok;
-    });
-}
-
-/* تحديث الإحصائيات */
-function updateStats() {
-    const total = tasks.length;
-    const completed = tasks.filter(t => t.completed).length;
-    const pending = total - completed;
-
-    totalTasksEl.textContent = total;
-    completedTasksEl.textContent = completed;
-    pendingTasksEl.textContent = pending;
-
-    const progress = total === 0 ? 0 : completed / total;
-    progressBar.style.transform = `scaleX(${progress})`;
-}
-
-/* عرض المهام */
-function renderTasks() {
-    taskList.innerHTML = "";
-
-    const filtered = getFilteredTasks();
-
-    if (filtered.length === 0) {
-        const li = document.createElement("li");
-        li.textContent = "لا توجد مهام مطابقة";
-        li.style.color = "#9ca3af";
-        li.style.fontSize = "0.9rem";
-        taskList.appendChild(li);
-        updateStats();
-        return;
+    if (action === "toggle") {
+        const task = tasks.find(t => t.id === id);
+        if (!task) return;
+        task.completed = !task.completed;
+        saveData();
+        renderTasks();
+        if (task.completed) playSound("done");
     }
 
-    filtered.forEach(task => {
-        const li = document.createElement("li");
-        li.className = "task-item";
-        if (task.completed) li.classList.add("completed");
+    if (action === "delete") {
+        const index = tasks.findIndex(t => t.id === id);
+        if (index === -1) return;
+        const removed = tasks.splice(index, 1)[0];
+        trash.push(removed);
+        saveData();
+        renderTasks();
+    }
+});
 
-        /* checkbox */
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = task.completed;
-        checkbox.addEventListener("change", () => toggleComplete(task.id));
+trashList.addEventListener("click", (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
 
-        /* main */
-        const main = document.createElement("div");
-        main.className = "task-main";
+    const id = Number(btn.dataset.id);
+    const action = btn.dataset.action;
 
-        const title = document.createElement("div");
-        title.className = "task-title";
-        title.textContent = task.title;
+    if (action === "restore") {
+        const index = trash.findIndex(t => t.id === id);
+        if (index === -1) return;
+        const restored = trash.splice(index, 1)[0];
+        tasks.push(restored);
+        saveData();
+        renderTasks();
+    }
 
-        const desc = document.createElement("div");
-        desc.className = "task-desc";
-        desc.textContent = task.description || "لا يوجد وصف";
+    if (action === "remove") {
+        const index = trash.findIndex(t => t.id === id);
+        if (index === -1) return;
+        trash.splice(index, 1);
+        saveData();
+        renderTrash();
+    }
+});
 
-        const meta = document.createElement("div");
-        meta.className = "task-meta";
+// ============ FILTERS & SEARCH ============
 
-        /* priority */
-        const pBadge = document.createElement("span");
-        pBadge.classList.add("badge");
-        pBadge.classList.add(`badge-priority-${task.priority}`);
-        pBadge.textContent =
-            task.priority === "low" ? "منخفضة" :
-            task.priority === "medium" ? "متوسطة" : "عالية";
+[statusFilter, priorityFilter, categoryFilter].forEach(el => {
+    el.addEventListener("change", renderTasks);
+});
 
-        meta.appendChild(pBadge);
-
-        /* category */
-        const cBadge = document.createElement("span");
-        cBadge.classList.add("badge", "badge-category");
-        cBadge.textContent =
-            task.category === "work" ? "عمل" :
-            task.category === "study" ? "دراسة" :
-            task.category === "personal" ? "شخصي" : "مخصص";
-
-        meta.appendChild(cBadge);
-
-        /* date */
-        if (task.dueDate) {
-            const dBadge = document.createElement("span");
-            dBadge.classList.add("badge", "badge-date");
-            dBadge.textContent = `تاريخ: ${task.dueDate}`;
-            meta.appendChild(dBadge);
-        }
-
-        main.appendChild(title);
-        main.appendChild(desc);
-        main.appendChild(meta);
-
-        /* actions */
-        const actions = document.createElement("div");
-        actions.className = "task-actions";
-
-        const completeBtn = document.createElement("button");
-        completeBtn.className = "action-btn action-complete";
-        completeBtn.textContent = task.completed ? "إلغاء الإكمال" : "وضع كمكتملة";
-        completeBtn.addEventListener("click", () => toggleComplete(task.id));
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.className = "action-btn action-delete";
-        deleteBtn.textContent = "حذف";
-        deleteBtn.addEventListener("click", () => deleteTask(task.id));
-
-        actions.appendChild(completeBtn);
-        actions.appendChild(deleteBtn);
-
-        li.appendChild(checkbox);
-        li.appendChild(main);
-        li.appendChild(actions);
-
-        taskList.appendChild(li);
-    });
-
-    updateStats();
-}
-
-/* تغيير حالة الإكمال */
-function toggleComplete(id) {
-    tasks = tasks.map(t =>
-        t.id === id ? { ...t, completed: !t.completed } : t
-    );
-    saveTasks();
-    renderTasks();
-}
-
-/* حذف مهمة */
-function deleteTask(id) {
-    tasks = tasks.filter(t => t.id !== id);
-    saveTasks();
-    renderTasks();
-}
-
-/* إعادة العرض عند تغيير الفلاتر */
-statusFilter.addEventListener("change", renderTasks);
-priorityFilter.addEventListener("change", renderTasks);
-categoryFilter.addEventListener("change", renderTasks);
 searchInput.addEventListener("input", renderTasks);
+
+// ============ POMODORO ============
+
+function updateTimerDisplay() {
+    const m = String(Math.floor(timerSeconds / 60)).padStart(2, "0");
+    const s = String(timerSeconds % 60).padStart(2, "0");
+    timerDisplay.textContent = `${m}:${s}`;
+}
+
+startTimerBtn.addEventListener("click", () => {
+    if (timerInterval) return;
+    timerInterval = setInterval(() => {
+        timerSeconds--;
+        if (timerSeconds <= 0) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 25 * 60;
+            playSound("timer");
+        }
+        updateTimerDisplay();
+    }, 1000);
+});
+
+resetTimerBtn.addEventListener("click", () => {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    timerSeconds = 25 * 60;
+    updateTimerDisplay();
+});
+
+// ============ SETTINGS PANEL ============
+
+settingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.add("visible");
+});
+
+closeSettingsBtn.addEventListener("click", () => {
+    settingsPanel.classList.remove("visible");
+});
+
+// ============ INIT ============
+
+window.addEventListener("load", () => {
+    loadData();
+    updateTimerDisplay();
+    renderTasks();
+
+    // إخفاء السبلاش بعد قليل (احتياط لو الأنيميشن ما اشتغل)
+    setTimeout(() => {
+        const splash = document.getElementById("splashScreen");
+        if (splash) splash.style.display = "none";
+    }, 3000);
+});
