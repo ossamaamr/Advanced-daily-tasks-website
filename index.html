@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <title>نظام إدارة المهام المتقدم</title>
 
-    <!-- ملفات CSS -->
+    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- ملف PWA Manifest -->
+    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- أيقونة التطبيق -->
+    <!-- Icon -->
     <link rel="icon" href="assets/icon-192.png">
 
-    <!-- ملفات JS -->
+    <!-- JS -->
     <script defer src="settings.js"></script>
     <script defer src="script.js"></script>
 
@@ -35,10 +35,17 @@
 
     <!-- الهيدر -->
     <header class="header">
-        <img src="assets/logo.png" class="logo">
-<h1>نظام إدارة المهام المتقدم</h1>
+        <img src="assets/logo.png" class="logo" style="width:50px; height:50px;">
+        <h1>مرحباً، <span id="userName"></span> 👋</h1>
+
+        <div style="display:flex; gap:10px;">
+            <button id="settingsBtn" class="btn">⚙ الإعدادات</button>
+            <button id="logoutBtn" class="btn">تسجيل خروج</button>
+        </div>
+    </header>
+
     <!-- الإحصائيات -->
-    <section class="stats">
+    <section class="stats card-animated">
         <div class="stat">
             <span>إجمالي المهام</span>
             <strong id="totalTasks">0</strong>
@@ -60,11 +67,12 @@
     </section>
 
     <!-- إضافة مهمة -->
-    <section class="task-form">
+    <section class="task-form card-animated">
         <h2>إضافة مهمة جديدة</h2>
 
         <form id="taskForm">
             <input type="text" id="title" placeholder="عنوان المهمة" required>
+
             <textarea id="description" placeholder="وصف المهمة (اختياري)"></textarea>
 
             <div class="row">
@@ -89,7 +97,7 @@
     </section>
 
     <!-- الفلاتر -->
-    <section class="filters">
+    <section class="filters card-animated">
         <h2>فلترة المهام</h2>
 
         <div class="row">
@@ -118,13 +126,13 @@
     </section>
 
     <!-- قائمة المهام -->
-    <section class="tasks">
+    <section class="tasks card-animated">
         <h2>قائمة المهام</h2>
         <ul id="taskList"></ul>
     </section>
 
     <!-- مؤقت بومودورو -->
-    <section class="pomodoro">
+    <section class="pomodoro card-animated">
         <h2>مؤقت التركيز (Pomodoro)</h2>
 
         <div class="timer">
@@ -138,7 +146,7 @@
     </section>
 
     <!-- لوحة الإعدادات -->
-    <div id="settingsPanel" class="settings-panel hidden">
+    <div id="settingsPanel" class="settings-panel">
         <h2>الإعدادات</h2>
 
         <label>الثيم</label>
@@ -156,22 +164,28 @@
         <button id="closeSettings" class="btn">إغلاق</button>
     </div>
 
-    <!-- تسجيل Service Worker (المطلوب إضافته) -->
+    <!-- تسجيل Service Worker -->
     <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
     </script>
 
-    <!-- زر تسجيل الخروج -->
+    <!-- مناداة المستخدم باسمه -->
+    <script>
+        document.getElementById("userName").textContent =
+            localStorage.getItem("username") || "مستخدم";
+    </script>
+
+    <!-- تسجيل الخروج -->
     <script>
         const logoutBtn = document.getElementById("logoutBtn");
         logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("loggedIn");
+            localStorage.removeItem("username");
             window.location.href = "login.html";
         });
     </script>
 
 </body>
 </html>
-
