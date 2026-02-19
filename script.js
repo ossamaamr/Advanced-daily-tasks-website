@@ -40,19 +40,10 @@ const reminderCheckbox = document.getElementById("reminder");
 
 // ============ SOUNDS (Premium Online Sounds) ============
 
-// صوت إضافة مهمة
 const soundAdd = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b1e1b3243.mp3?filename=click-124467.mp3");
-
-// صوت إكمال مهمة
 const soundDone = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5e8c6f6d9f.mp3?filename=success-1-6297.mp3");
-
-// صوت انتهاء البومودورو
 const soundTimer = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_1e8e7a69a3.mp3?filename=notification-113724.mp3");
-
-// صوت حذف مهمة
 const soundDelete = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_2b3f4e6c2a.mp3?filename=delete-14803.mp3");
-
-// صوت استعادة مهمة
 const soundRestore = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_3a9e7c4d1b.mp3?filename=pop-94319.mp3");
 
 function playSound(type) {
