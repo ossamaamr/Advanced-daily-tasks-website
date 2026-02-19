@@ -1,7 +1,7 @@
 {
   "name": "Task Manager Pro",
   "short_name": "Tasks",
-  "start_url": "index.html",
+  "start_url": "/Advanced-daily-tasks-website/",
   "display": "standalone",
   "background_color": "#020617",
   "theme_color": "#020617",
