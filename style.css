@@ -1,5 +1,5 @@
 /* ============================
-   GOLD PREMIUM THEME
+   GOLD ANDROID APP UI THEME
 ============================ */
 
 :root {
@@ -8,32 +8,35 @@
     --bg-dark: #0D0D0D;
     --bg-card: #1A1A1A;
     --text: #FFFFFF;
-    --border-gold: rgba(212,175,55,0.4);
-    --shadow-gold: 0 0 12px rgba(212,175,55,0.25);
+    --border-gold: rgba(212,175,55,0.35);
+    --shadow-gold: 0 0 14px rgba(212,175,55,0.25);
 }
 
+/* GENERAL */
 body {
     background: var(--bg-dark);
     color: var(--text);
     font-family: "Cairo", sans-serif;
     margin: 0;
-    padding: 0;
+    padding: 0 0 40px 0;
 }
 
 /* HEADER */
 .header {
     background: var(--bg-card);
-    padding: 20px;
+    padding: 18px;
     border-bottom: 1px solid var(--border-gold);
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-shadow: var(--shadow-gold);
+    border-radius: 0 0 20px 20px;
 }
 
 .header h1 {
     color: var(--gold);
     margin: 0;
+    font-size: 1.4rem;
 }
 
 /* BUTTONS */
@@ -41,10 +44,11 @@ body {
     background: var(--gold);
     color: #000;
     border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
+    padding: 14px;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: bold;
+    font-size: 1rem;
     transition: 0.2s;
 }
 
@@ -52,39 +56,54 @@ body {
     background: var(--gold-light);
 }
 
-/* CARDS */
+/* CARDS (ANDROID STYLE) */
 section, .settings-panel {
     background: var(--bg-card);
     border: 1px solid var(--border-gold);
-    border-radius: 14px;
+    border-radius: 18px;
     padding: 20px;
-    margin: 20px;
+    margin: 18px auto;
+    max-width: 92%;
     box-shadow: var(--shadow-gold);
+}
+
+/* SPACE BETWEEN CARDS */
+section + section {
+    margin-top: 25px;
+}
+
+/* TITLES */
+section h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--gold);
 }
 
 /* INPUTS */
 input, textarea, select {
     width: 100%;
-    padding: 10px;
+    padding: 14px;
     background: #111;
     border: 1px solid var(--border-gold);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
-    margin-bottom: 12px;
+    margin-bottom: 14px;
+    font-size: 1rem;
 }
 
 /* TASK LIST */
 #taskList {
     list-style: none;
     padding: 0;
+    margin-top: 10px;
 }
 
 .task {
     background: #111;
     border: 1px solid var(--border-gold);
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 12px;
+    padding: 18px;
+    border-radius: 14px;
+    margin-bottom: 18px;
     box-shadow: var(--shadow-gold);
 }
 
@@ -96,20 +115,20 @@ input, textarea, select {
 /* BADGES */
 .badge {
     display: inline-block;
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 5px 12px;
+    border-radius: 8px;
     margin-right: 6px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     background: var(--gold);
     color: #000;
 }
 
 /* POMODORO */
 .timer {
-    font-size: 3rem;
+    font-size: 3.5rem;
     text-align: center;
     color: var(--gold);
-    margin-bottom: 15px;
+    margin: 20px 0;
 }
 
 /* SETTINGS PANEL */
@@ -117,7 +136,7 @@ input, textarea, select {
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 320px;
+    width: 330px;
     transform: translate(-50%, -50%);
     z-index: 999;
     display: none;
@@ -136,4 +155,9 @@ input, textarea, select {
 
 .card-animated {
     animation: goldGlow 2.5s infinite ease-in-out;
+}
+
+/* ROW SPACING */
+.row > * {
+    margin-bottom: 12px;
 }
