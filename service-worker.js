@@ -1,29 +1,34 @@
-const CACHE_NAME = "task-manager-cache-v1";
-const FILES_TO_CACHE = [
-  "index.html",
-  "style.css",
-  "script.js",
-  "settings.js",
-  "login.html",
-  "login.js",
-  "assets/icon-192.png",
-  "assets/icon-512.png"
+const CACHE_NAME = "taskmaster-ultra-v1";
+const ASSETS = [
+  "/Advanced-daily-tasks-website/",
+  "/Advanced-daily-tasks-website/index.html",
+  "/Advanced-daily-tasks-website/style.css",
+  "/Advanced-daily-tasks-website/script.js",
+  "/Advanced-daily-tasks-website/login.html",
+  "/Advanced-daily-tasks-website/login.js",
+  "/Advanced-daily-tasks-website/manifest.json",
+  "/Advanced-daily-tasks-website/assets/icon-192.png",
+  "/Advanced-daily-tasks-website/assets/icon-512.png"
 ];
 
-// تثبيت Service Worker
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(FILES_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
   );
 });
 
-// جلب الملفات من الكاش
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
+    )
+  );
+});
+
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
+    caches.match(event.request).then(res => res || fetch(event.request))
   );
 });
