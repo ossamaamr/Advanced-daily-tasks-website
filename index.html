@@ -10,7 +10,7 @@
     <!-- ملف PWA Manifest -->
     <link rel="manifest" href="manifest.json">
 
-    <!-- أيقونات PWA -->
+    <!-- أيقونة التطبيق -->
     <link rel="icon" href="assets/icon-192.png">
 
     <!-- ملفات JS -->
@@ -18,7 +18,6 @@
     <script defer src="script.js"></script>
 
     <style>
-        /* زر تسجيل الخروج */
         #logoutBtn {
             margin-right: 10px;
         }
@@ -73,7 +72,6 @@
 
         <form id="taskForm">
             <input type="text" id="title" placeholder="عنوان المهمة" required>
-
             <textarea id="description" placeholder="وصف المهمة (اختياري)"></textarea>
 
             <div class="row">
@@ -165,11 +163,11 @@
         <button id="closeSettings" class="btn">إغلاق</button>
     </div>
 
-    <!-- تسجيل Service Worker -->
+    <!-- تسجيل Service Worker (المطلوب إضافته) -->
     <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
     </script>
 
     <!-- زر تسجيل الخروج -->
