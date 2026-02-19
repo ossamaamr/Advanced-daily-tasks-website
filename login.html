@@ -2,38 +2,44 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تسجيل الدخول</title>
+    <title>تسجيل الدخول – TaskMaster Ultra</title>
     <link rel="stylesheet" href="style.css">
 
     <style>
         body {
-            background: #0D0D0D;
+            background: radial-gradient(circle at top, #1b1b2f 0, #050509 55%);
             font-family: "Cairo", sans-serif;
             color: white;
         }
 
         .login-container {
-            width: 350px;
+            width: 340px;
             margin: 120px auto;
-            background: #1A1A1A;
-            padding: 30px;
-            border-radius: 16px;
+            background: rgba(10,10,18,0.96);
+            padding: 26px;
+            border-radius: 20px;
             border: 1px solid rgba(212,175,55,0.4);
             box-shadow: 0 0 18px rgba(212,175,55,0.25);
             text-align: center;
-            animation: fadeIn 1s ease;
+            animation: fadeIn 0.9s ease;
         }
 
         h2 {
             color: #D4AF37;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 0.85rem;
+            margin-bottom: 18px;
         }
 
         input {
             width: 100%;
             padding: 12px;
             margin-bottom: 14px;
-            border-radius: 8px;
+            border-radius: 10px;
             border: 1px solid rgba(212,175,55,0.4);
             background: #111;
             color: white;
@@ -42,16 +48,16 @@
         .btn {
             width: 100%;
             padding: 12px;
-            background: #D4AF37;
+            background: linear-gradient(135deg, #D4AF37, #F5D76E);
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
         }
 
         .btn:hover {
-            background: #F5D76E;
+            filter: brightness(1.08);
         }
 
         @keyframes fadeIn {
@@ -64,7 +70,8 @@
 <body>
 
     <div class="login-container">
-        <h2>مرحباً بك</h2>
+        <h2>TaskMaster Ultra</h2>
+        <p>اكتب اسمك لنبدأ رحلتك مع الإنتاجية الفاخرة</p>
 
         <input type="text" id="username" placeholder="اكتب اسمك هنا" required>
 
