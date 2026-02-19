@@ -1,28 +1,22 @@
-/* ============================
-   نظام تسجيل الدخول المحلي
-============================ */
-
-/* بيانات الدخول الثابتة */
-const VALID_USERNAME = "admin";
-const VALID_PASSWORD = "12345";
-
-/* عناصر DOM */
+// تسجيل الدخول بالاسم فقط
 const loginBtn = document.getElementById("loginBtn");
-const errorMsg = document.getElementById("errorMsg");
 
 loginBtn.addEventListener("click", () => {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
+    const name = document.getElementById("username").value.trim();
 
-    if (user === VALID_USERNAME && pass === VALID_PASSWORD) {
-        localStorage.setItem("loggedIn", "true");
-        window.location.href = "index.html";
-    } else {
-        errorMsg.style.display = "block";
+    if (name.length < 2) {
+        alert("الرجاء إدخال اسم صحيح");
+        return;
     }
+
+    // حفظ الاسم في localStorage
+    localStorage.setItem("loggedIn", "true");
+    localStorage.setItem("username", name);
+
+    window.location.href = "index.html";
 });
 
-/* إذا كان المستخدم مسجلاً دخول بالفعل → ادخله مباشرة */
+// إذا كان مسجل دخول → ادخله مباشرة
 if (localStorage.getItem("loggedIn") === "true") {
     window.location.href = "index.html";
 }
