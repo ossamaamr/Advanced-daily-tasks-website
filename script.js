@@ -1,3 +1,4 @@
+document.getElementById("userName").textContent = localStorage.getItem("username") || "مستخدم";
 /* تسجيل الخروج */
 const logoutBtn = document.getElementById("logoutBtn");
 
