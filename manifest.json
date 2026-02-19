@@ -1,18 +1,18 @@
 {
   "name": "TaskMaster Ultra",
   "short_name": "TaskMaster",
-  "start_url": "/Advanced-daily-tasks-website/",
+  "start_url": "index.html",
   "display": "standalone",
   "background_color": "#050509",
   "theme_color": "#050509",
   "icons": [
     {
-      "src": "assets/icon-192.png",
+      "src": "https://i.imgur.com/5zQ2YtU.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "assets/icon-512.png",
+      "src": "https://i.imgur.com/0p5o8qN.png",
       "sizes": "512x512",
       "type": "image/png"
     }
