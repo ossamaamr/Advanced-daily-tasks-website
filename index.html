@@ -2,29 +2,23 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>نظام إدارة المهام المتقدم</title>
+    <title>TaskMaster Ultra – نظام إدارة المهام الفاخر</title>
 
-    <!-- CSS -->
     <link rel="stylesheet" href="style.css">
-
-    <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
-
-    <!-- Icon -->
     <link rel="icon" href="assets/icon-192.png">
 
-    <!-- JS -->
     <script defer src="settings.js"></script>
     <script defer src="script.js"></script>
-
-    <style>
-        #logoutBtn {
-            margin-right: 10px;
-        }
-    </style>
 </head>
 
 <body>
+
+    <!-- شاشة ترحيب / سبلاش -->
+    <div id="splashScreen" class="splash">
+        <div class="splash-logo">TaskMaster Ultra</div>
+        <div class="splash-sub">Gold · Material · Ultra</div>
+    </div>
 
     <!-- حماية الصفحة -->
     <script>
@@ -35,30 +29,41 @@
 
     <!-- الهيدر -->
     <header class="header">
-        <img src="assets/logo.png" class="logo" style="width:50px; height:50px;">
-        <h1>مرحباً، <span id="userName"></span> 👋</h1>
+        <div class="header-left">
+            <img src="assets/logo.png" class="logo">
+            <div>
+                <h1>مرحباً، <span id="userName"></span> 👋</h1>
+                <p class="subtitle">أنجز مهامك بأسلوب فاخر</p>
+            </div>
+        </div>
 
-        <div style="display:flex; gap:10px;">
-            <button id="settingsBtn" class="btn">⚙ الإعدادات</button>
-            <button id="logoutBtn" class="btn">تسجيل خروج</button>
+        <div class="header-right">
+            <button id="settingsBtn" class="icon-btn">⚙</button>
+            <button id="lockBtn" class="icon-btn">🔒</button>
+            <button id="logoutBtn" class="icon-btn">⏻</button>
         </div>
     </header>
 
-    <!-- الإحصائيات -->
+    <!-- الإحصائيات المتقدمة -->
     <section class="stats card-animated">
-        <div class="stat">
-            <span>إجمالي المهام</span>
-            <strong id="totalTasks">0</strong>
-        </div>
-
-        <div class="stat">
-            <span>المكتملة</span>
-            <strong id="completedTasks">0</strong>
-        </div>
-
-        <div class="stat">
-            <span>المتبقية</span>
-            <strong id="pendingTasks">0</strong>
+        <h2>لوحة الإحصائيات</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span>إجمالي المهام</span>
+                <strong id="totalTasks">0</strong>
+            </div>
+            <div class="stat-card">
+                <span>المكتملة</span>
+                <strong id="completedTasks">0</strong>
+            </div>
+            <div class="stat-card">
+                <span>المتبقية</span>
+                <strong id="pendingTasks">0</strong>
+            </div>
+            <div class="stat-card">
+                <span>اليوم</span>
+                <strong id="todayTasks">0</strong>
+            </div>
         </div>
 
         <div class="progress-container">
@@ -66,49 +71,54 @@
         </div>
     </section>
 
-    <!-- إضافة مهمة -->
+    <!-- إضافة مهمة جديدة -->
     <section class="task-form card-animated">
         <h2>إضافة مهمة جديدة</h2>
 
         <form id="taskForm">
             <input type="text" id="title" placeholder="عنوان المهمة" required>
-
-            <textarea id="description" placeholder="وصف المهمة (اختياري)"></textarea>
+            <textarea id="description" placeholder="وصف المهمة أو ملاحظات إضافية"></textarea>
 
             <div class="row">
                 <input type="date" id="dueDate">
-
                 <select id="priority">
                     <option value="low">منخفضة</option>
                     <option value="medium" selected>متوسطة</option>
                     <option value="high">عالية</option>
                 </select>
-
                 <select id="category">
                     <option value="work">عمل</option>
                     <option value="study">دراسة</option>
                     <option value="personal">شخصي</option>
+                    <option value="health">صحة</option>
+                    <option value="finance">مال</option>
                     <option value="custom">مخصص</option>
                 </select>
             </div>
 
-            <button class="btn">إضافة</button>
+            <input type="text" id="customCategory" placeholder="اسم الفئة المخصصة" style="display:none;">
+
+            <label class="checkbox-inline">
+                <input type="checkbox" id="reminder"> تذكيري بهذه المهمة
+            </label>
+
+            <button class="btn primary">إضافة المهمة</button>
         </form>
     </section>
 
-    <!-- الفلاتر -->
+    <!-- الفلاتر والبحث -->
     <section class="filters card-animated">
-        <h2>فلترة المهام</h2>
+        <h2>فلترة وبحث</h2>
 
         <div class="row">
             <select id="statusFilter">
-                <option value="all">الكل</option>
+                <option value="all">كل الحالات</option>
                 <option value="pending">غير مكتملة</option>
                 <option value="completed">مكتملة</option>
             </select>
 
             <select id="priorityFilter">
-                <option value="all">الكل</option>
+                <option value="all">كل الأولويات</option>
                 <option value="low">منخفضة</option>
                 <option value="medium">متوسطة</option>
                 <option value="high">عالية</option>
@@ -119,16 +129,24 @@
                 <option value="work">عمل</option>
                 <option value="study">دراسة</option>
                 <option value="personal">شخصي</option>
+                <option value="health">صحة</option>
+                <option value="finance">مال</option>
             </select>
-
-            <input type="text" id="searchInput" placeholder="بحث...">
         </div>
+
+        <input type="text" id="searchInput" placeholder="بحث بالعنوان أو الوصف...">
     </section>
 
     <!-- قائمة المهام -->
     <section class="tasks card-animated">
         <h2>قائمة المهام</h2>
         <ul id="taskList"></ul>
+    </section>
+
+    <!-- سلة المهملات -->
+    <section class="trash card-animated">
+        <h2>سلة المهملات</h2>
+        <ul id="trashList"></ul>
     </section>
 
     <!-- مؤقت بومودورو -->
@@ -140,7 +158,7 @@
         </div>
 
         <div class="timer-controls">
-            <button id="startTimer" class="btn">ابدأ</button>
+            <button id="startTimer" class="btn primary">ابدأ</button>
             <button id="resetTimer" class="btn">إعادة</button>
         </div>
     </section>
@@ -151,14 +169,22 @@
 
         <label>الثيم</label>
         <select id="themeSelect">
+            <option value="gold">Gold Premium</option>
+            <option value="material">Material You</option>
             <option value="dark">داكن</option>
             <option value="light">فاتح</option>
         </select>
 
-        <label>اللغة</label>
+        <label>لغة الواجهة</label>
         <select id="langSelect">
             <option value="ar">العربية</option>
             <option value="en">English</option>
+        </select>
+
+        <label>تفعيل الأصوات</label>
+        <select id="soundSelect">
+            <option value="on">مفعّل</option>
+            <option value="off">مغلق</option>
         </select>
 
         <button id="closeSettings" class="btn">إغلاق</button>
